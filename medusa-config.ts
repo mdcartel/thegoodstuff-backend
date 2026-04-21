@@ -1,11 +1,16 @@
-import { defineConfig } from "@medusajs/utils"
+// In your backend project: medusa-config.ts
+import { loadEnv, defineConfig } from '@medusajs/framework/utils'
+
+loadEnv(process.env.NODE_ENV || 'development', process.cwd())
 
 export default defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
+    // Redis is required for background tasks and events in production
+    redisUrl: process.env.REDIS_URL,
     databaseDriverOptions: {
       connection: {
-        ssl: { rejectUnauthorized: false }, // Add this for Render/Heroku/DigitalOcean
+        ssl: { rejectUnauthorized: false }, // Mandatory for Neon
       },
     },
     http: {
