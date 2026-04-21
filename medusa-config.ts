@@ -14,11 +14,17 @@ export default defineConfig({
       },
     },
     http: {
-      storeCors: process.env.STORE_CORS || "http://localhost:3000",
-      adminCors: process.env.ADMIN_CORS || "http://localhost:9000",
-      authCors: process.env.AUTH_CORS || "http://localhost:3000",
+      storeCors: process.env.STORE_CORS || "",
+      adminCors: process.env.ADMIN_CORS || "",
+      authCors: process.env.AUTH_CORS || "",
       jwtSecret: process.env.JWT_SECRET || "supersecret",
       cookieSecret: process.env.COOKIE_SECRET || "supersecret",
     }
+  },
+  // Add this section if it's missing to ensure Admin loads correctly
+  admin: {
+    disable: false,
+    path: "/app",
+    backendUrl: process.env.MEDUSA_BACKEND_URL || "https://thegoodstuff-backend.onrender.com"
   }
 })
