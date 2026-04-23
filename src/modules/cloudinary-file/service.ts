@@ -37,18 +37,16 @@ class CloudinaryFileProviderService extends AbstractFileProviderService {
     async upload(
         file: FileTypes.ProviderUploadFileDTO
     ): Promise<FileTypes.ProviderFileResultDTO> {
-        // Medusa provides content as a raw base64 string.
-        // Cloudinary needs a data URI prefix to properly decode it.
-        const mimeType = file.mimeType || "application/octet-stream"
-        const dataUri = `data:${mimeType};base64,${file.content}`
-
         this.logger_.info(
-            `Uploading file to Cloudinary: ${file.filename} (${mimeType})`
+            `Uploading file to Cloudinary: ${file.filename} (${file.mimeType})`
         )
 
+        // Convert base64 content to a Buffer and stream it directly to Cloudinary.
+        // This avoids the memory overhead of base64 data URIs and is significantly faster.
+        const buffer = Buffer.from(file.content, "base64")
+
         const result = await new Promise<UploadApiResponse>((resolve, reject) => {
-            cloudinary.uploader.upload(
-                dataUri,
+            const uploadStream = cloudinary.uploader.upload_stream(
                 {
                     resource_type: "auto",
                     folder: "medusa",
@@ -65,6 +63,7 @@ class CloudinaryFileProviderService extends AbstractFileProviderService {
                     resolve(result!)
                 }
             )
+            uploadStream.end(buffer)
         })
 
         this.logger_.info(
