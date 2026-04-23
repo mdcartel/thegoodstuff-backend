@@ -44,6 +44,7 @@ export default defineConfig({
   admin: {
     disable: false,
     path: "/app",
-    backendUrl: process.env.MEDUSA_BACKEND_URL || "https://thegoodstuff-backend.onrender.com"
+    backendUrl: process.env.MEDUSA_BACKEND_URL || "https://thegoodstuff-backend.onrender.com",
+    maxUploadFileSize: Infinity
   }
 })
